@@ -14,9 +14,12 @@ import {
   TextInput,
   Dimensions,
   Button,
-
+  Animated,
+  Image,
+  TouchableOpacity
 } from 'react-native';
 import LottieView from 'lottie-react-native';
+import Carousel from 'react-native-snap-carousel';
 
 import { Icon } from 'react-native-elements';
 import {StackNavigator, NavigationActions} from 'react-navigation';
@@ -24,6 +27,7 @@ import MapView from 'react-native-maps';
 import Geocoder from 'react-native-geocoder';
 import ActionButton from 'react-native-action-button';
 import Options from './options';
+import locate from './locat.json';
 const { width, height } = Dimensions.get('window');
 
 const ASPECT_RATIO = width / height;
@@ -31,6 +35,10 @@ const LATITUDE = 22.78825;
 const LONGITUDE = 75.4324;
 const LATITUDE_DELTA = 0.02;
 const LONGITUDE_DELTA = LATITUDE_DELTA * ASPECT_RATIO;
+const screenw = Dimensions.get('window').width;
+const screenh = Dimensions.get('window').height;
+const sliderWidth = Dimensions.get('window');
+
 
 class Home extends React.Component {
   static navigationOptions = {
@@ -39,6 +47,7 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
+      progress: new Animated.Value(0),
       registered: false,
       value: '',
       region: {
@@ -51,7 +60,23 @@ class Home extends React.Component {
     this.onRegionChange = this.onRegionChange.bind(this);
     this._getCoords = this._getCoords.bind(this);
     this._getvalue = this._getvalue.bind(this);
+
   }
+
+  _renderItem ({item, index}) {
+
+
+      return (
+          <View style={styles.itemContainer}>
+              <Image style={styles.imageSlide} source={require('./Bajaj-Allianz.jpg')} />
+              <View style={styles.boxtitle} >
+              <Text style={styles.title}>{ item.name }</Text>
+
+
+            </View>
+          </View>
+      );
+    }
   _findMe(){
     navigator.geolocation.getCurrentPosition(
       ({coords}) => {
@@ -77,6 +102,7 @@ class Home extends React.Component {
     alert(this.state.value);
   }
   componentDidMount() {
+
     this._getCoords();
     this.watchID = navigator.geolocation.watchPosition((position) => {
       var lastPosition = JSON.stringify(position);
@@ -91,6 +117,10 @@ class Home extends React.Component {
 
   }
   onRegionChange(position) {
+    Animated.timing(this.state.progress, {
+     toValue: 1,
+     duration: 5000,
+   }).start();
     this.setState({
       region: {
         latitude: position.latitude,
@@ -166,11 +196,32 @@ class Home extends React.Component {
   componentWillUnmount() {
     navigator.geolocation.clearWatch(this.watchID);
   }
+  _checkone(id){
+    return fetch('https://still-taiga-32576.herokuapp.com/api/locate')
+      .then((response) => response.json())
+      .then((responseJson) => {
+        this.setState({
+          userval: responseJson[id],
+        });
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+
+  }
 
   render() {
     const navigate = this.props.navigation;
+
+    const items = [
+      { name: 'General Service', code: '#1abc9c' }, { name: 'Repair', code: '#2ecc71' },
+      { name: 'Car Wash', code: '#3498db' }, { name: 'Painting', code: '#9b59b6' },
+      { name: 'Road Support', code: '#16a085' },{ name: 'Offers', code: '#27ae60' }
+
+    ];
     return (
       <View style={styles.container}>
+
 
          <MapView
          ref={component => this._map = component}
@@ -200,10 +251,23 @@ class Home extends React.Component {
           <ActionButton icon={(<Icon color="grey" name="location-arrow" type="font-awesome" />)} style={styles.actbt} buttonColor="#fff"  onPress={this._getCoords} />
 
         <View style={styles.caring} >
-
-        <Button color="#064"
-        title="Start Caring"
-        onPress={() => this.props.navigation.navigate("Two")}        />
+          <Carousel
+                  enableMomentum={true}
+                  style={styles.slide}
+                  ref={(c) => { this._carousel = c; }}
+                  data={items}
+                  renderItem={this._renderItem}
+                  sliderWidth={sliderWidth.width}
+                  itemWidth={250}
+                  containerCustomStyle={{ flex: 1 }}
+                  slideStyle={{ flex: 1 }}
+                  scrollEndDragDebounceValue={5}
+                  onScroll={() => this._checkone(this._carousel.currentIndex)}
+                />
+                <Button
+                  color="#064"
+                title="Book Mechcar"
+                onPress={()=> this.props.navigation.navigate("Two",{ user: this.state.userval})} />
          </View>
       </View>
 
@@ -218,6 +282,10 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: '#F5FCFF',
+  },
+  lottivw:{
+    height:100,
+    width: 50
   },
   searchbar:{
     position :'absolute',
@@ -261,10 +329,36 @@ const styles = StyleSheet.create({
   },
   actbt: {
     marginBottom: 15,
-    padding: 50
+    padding: 50,
+    zIndex: 999
   },
   iconmap: {
     marginBottom: 30
+  },
+  imageSlide:{
+    height : 100,
+    width: 250,
+    position :'absolute',
+    borderRadius : 15
+  },
+boxtitle: {
+    margin : 15,
+    overflow:'hidden',
+    padding : 5
+ },
+itemContainer: {
+    justifyContent: 'flex-end',
+    borderRadius: 15,
+    marginTop: 5,
+    height: 100,
+    width : 250,
+    backgroundColor : "#064",
+    marginBottom: 15,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 5,
+    shadowRadius: 60,
+    elevation: 40,
   }
 });
 

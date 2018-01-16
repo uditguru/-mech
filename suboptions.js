@@ -1,12 +1,30 @@
 import React, { Component } from 'react';
-import { View,Text, Button,TouchableOpacity ,TextInput, AsyncStorage, FlatList, StyleSheet, ScrollView,ActivityIndicator, ListView, Image, Dimensions} from 'react-native';
+import {  View,Text, Button,TouchableOpacity ,
+          TextInput, AsyncStorage, FlatList,
+          StyleSheet, ScrollView,ActivityIndicator,
+          ListView, Image, Dimensions, Animated} from 'react-native';
 import {StackNavigator} from 'react-navigation';
 import { List, ListItem, Rating } from 'react-native-elements';
 import GridView from 'react-native-super-grid';
 import Home from './App';
 import Carousel from 'react-native-snap-carousel';
+
 const sliderWidth = Dimensions.get('window');
 
+
+const list = [
+  {
+    name: 'Amy Farha',
+    avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
+    subtitle: 'Vice President'
+  },
+  {
+    name: 'Chris Jackson',
+    avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
+    subtitle: 'Vice Chairman'
+  },
+
+]
 
 class subOptions extends React.Component {
 static navigationOptions = {
@@ -19,13 +37,26 @@ static navigationOptions = {
         isLoading: true
       }
   }
+  _renderItem ({item, index}) {
+      return (
+          <View style={styles.itemContainer}>
+              <Image style={styles.imageSlide} source={require('./Bajaj-Allianz.jpg')} />
+              <View style={styles.boxtitle} >
+              <Text style={styles.title}>{ item.name }</Text>
+              <Button title="Press me " onPress={()=> alert('hello')} />
 
+            </View>
+          </View>
+      );
+    }
   componentDidMount() {
+
       return fetch('https://still-taiga-32576.herokuapp.com/api/locate')
         .then((response) => response.json())
         .then((responseJson) => {
           let ds = responseJson;
           this.setState({
+            progress: new Animated.Value(0.5),
             isLoading: false,
             dataSource: responseJson
           }, function() {
@@ -41,12 +72,15 @@ static navigationOptions = {
         return (
             <View style={styles.itemContainer}>
                 <Image style={styles.imageSlide} source={require('./Bajaj-Allianz.jpg')} />
-                <View style={styles.text} >
+                <View style={styles.boxtitle} >
                 <Text style={styles.title}>{ item.name }</Text>
-                <Text style={styles.title}>{ item.code }</Text>
+                <Button title="Press me " onPress={()=> alert('hello')} />
+
               </View>
             </View>
         );
+        this.animation.play(30, 120);
+
     }
     render() {
       const items = [
@@ -77,6 +111,17 @@ static navigationOptions = {
                   containerCustomStyle={{ flex: 1 }}
                   slideStyle={{ flex: 1 }}
                 />
+                <List containerStyle={{marginBottom: 20}}>
+                  {
+                    this.state.dataSource.map((l, i) => (
+                      <ListItem
+
+                        key={i}
+                        title={l.mobile}
+                      />
+                    ))
+                  }
+                </List>
                 </ScrollView>
         </View>
       );
@@ -110,12 +155,13 @@ static navigationOptions = {
         position :'absolute',
         borderRadius : 15
       },
-      title: {
-        color: "white",
+      boxtitle: {
         margin : 15,
         overflow:'hidden',
-        borderBottomLeftRadius: 15,
-        borderBottomRightRadius: 15
+        padding : 5
+     },
+      title:{
+        color:"#FFF"
       },
       item: {
         padding: 10,
@@ -130,7 +176,7 @@ static navigationOptions = {
       itemContainer: {
         justifyContent: 'flex-end',
         borderRadius: 15,
-        marginTop: 10,
+        marginTop: 5,
         height: 300,
         width : 250,
         backgroundColor : "#064",
@@ -145,5 +191,9 @@ static navigationOptions = {
         fontSize: 12,
         color: '#fff',
       },
+      lottivw:{
+        height:100,
+        width: 100
+      }
     });
 export default subOptions;

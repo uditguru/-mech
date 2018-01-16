@@ -7,3 +7,5 @@ include ':react-native-maps'
 project(':react-native-maps').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-maps/lib/android')
 include ':react-native-geocoder'
 project(':react-native-geocoder').projectDir = new File(rootProject.projectDir, '../node_modules/react-native-geocoder/android')
+include ':lottie-react-native'
+project(':lottie-react-native').projectDir = new File(rootProject.projectDir, '../node_modules/lottie-react-native/lib/android')
