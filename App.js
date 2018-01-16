@@ -14,7 +14,7 @@ import {
   TextInput,
   Dimensions,
   Button,
-  
+
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 
@@ -50,6 +50,7 @@ class Home extends React.Component {
     }
     this.onRegionChange = this.onRegionChange.bind(this);
     this._getCoords = this._getCoords.bind(this);
+    this._getvalue = this._getvalue.bind(this);
   }
   _findMe(){
     navigator.geolocation.getCurrentPosition(
@@ -110,7 +111,7 @@ class Home extends React.Component {
 
     Geocoder.geocodePosition(geoloc).then(res => {
       let addressgeo = res[0].formattedAddress;
-      
+
       this.setState({
         value: addressgeo,
       });
@@ -148,17 +149,19 @@ class Home extends React.Component {
         this._map.animateToCoordinate(tempCoords, 2);
         Geocoder.geocodePosition(coords).then(res => {
         let addressgeo1 = res[0].formattedAddress;
-        
+
       this.setState({
         value: addressgeo1,
       });
-      console.log(this.state.value);
     })
-      .catch(err => alert(err))
+      .catch(err => alert(JSON.stringify(err)))
       },
-      (Error) => alert(Error),
+      (Error) => alert(JSON.stringify(Error)),
       { enableHighAccuracy: true, timeout: 2000, maximumAge: 1000 }
     );
+}
+  _getvalue() {
+    return this.state.value;
   }
   componentWillUnmount() {
     navigator.geolocation.clearWatch(this.watchID);
@@ -168,7 +171,7 @@ class Home extends React.Component {
     const navigate = this.props.navigation;
     return (
       <View style={styles.container}>
-      
+
          <MapView
          ref={component => this._map = component}
          style ={styles.map}
@@ -177,7 +180,7 @@ class Home extends React.Component {
          onRegionChangeComplete={this.onRegionChange}
        >
        </MapView>
-       <TextInput 
+       <TextInput
        ref ="textInput"
         style={styles.searchbar}
         value={this.state.value}
@@ -195,16 +198,16 @@ class Home extends React.Component {
             />
                   </View>
           <ActionButton icon={(<Icon color="grey" name="location-arrow" type="font-awesome" />)} style={styles.actbt} buttonColor="#fff"  onPress={this._getCoords} />
-          
+
         <View style={styles.caring} >
-        
+
         <Button color="#064"
         title="Start Caring"
         onPress={() => this.props.navigation.navigate("Two")}        />
          </View>
       </View>
- 
-        
+
+
     );
   }
 }

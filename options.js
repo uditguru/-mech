@@ -1,13 +1,14 @@
 import React, { Component } from 'react';
-import { View,Text, Button, TextInput, AsyncStorage, FlatList, StyleSheet, ScrollView} from 'react-native';
+import { View,Text, Button, TextInput, AsyncStorage, FlatList, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import {StackNavigator} from 'react-navigation';
 import Home from './App';
 import { List, ListItem, Rating } from 'react-native-elements';
 import GridView from 'react-native-super-grid';
+import subOptions from './suboptions';
 
 
 
-class Options extends Component {
+class Options extends React.Component {
 static navigationOptions = {
   title : 'Options'
 }
@@ -32,26 +33,26 @@ setItem(): async{
     }
 }
   render() {
+    const navigate = this.props.navigation;
+
     const items = [
-      { name: 'TURQUOISE', code: '#1abc9c' }, { name: 'EMERALD', code: '#2ecc71' },
-      { name: 'PETER RIVER', code: '#3498db' }, { name: 'AMETHYST', code: '#9b59b6' },
-      { name: 'WET ASPHALT', code: '#34495e' }, { name: 'GREEN SEA', code: '#16a085' },
-      { name: 'NEPHRITIS', code: '#27ae60' }, { name: 'BELIZE HOLE', code: '#2980b9' },
-      { name: 'WISTERIA', code: '#8e44ad' }, { name: 'MIDNIGHT BLUE', code: '#2c3e50' },
-      { name: 'SUN FLOWER', code: '#f1c40f' }, { name: 'CARROT', code: '#e67e22' }
-      
+      { name: 'General Service', code: '#1abc9c' }, { name: 'Repair', code: '#2ecc71' },
+      { name: 'Car Wash', code: '#3498db' }, { name: 'Painting', code: '#9b59b6' },
+      { name: 'Road Support', code: '#16a085' },{ name: 'Offers', code: '#27ae60' }
+
     ];
 
    return (
        <GridView
+
         itemDimension={100}
         items={items}
         style={styles.gridView}
         renderItem={item => (
-          <View style={[styles.itemContainer, { backgroundColor: item.code }]}>
+          <TouchableOpacity  onPress={() => this.props.navigation.navigate("Three")} style={[styles.itemContainer, { backgroundColor: item.code }]}>
             <Text style={styles.itemName}>{item.name}</Text>
             <Text style={styles.itemCode}>{item.code}</Text>
-          </View>
+          </TouchableOpacity>
         )}
       />
    );
