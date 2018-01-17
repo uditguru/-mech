@@ -68,7 +68,7 @@ class Home extends React.Component {
 
       return (
           <View style={styles.itemContainer}>
-              <Image style={styles.imageSlide} source={require('./Bajaj-Allianz.jpg')} />
+              <Image style={styles.imageSlide} source={require('./car.png')} />
               <View style={styles.boxtitle} >
               <Text style={styles.title}>{ item.name }</Text>
 
@@ -117,10 +117,7 @@ class Home extends React.Component {
 
   }
   onRegionChange(position) {
-    Animated.timing(this.state.progress, {
-     toValue: 1,
-     duration: 5000,
-   }).start();
+
     this.setState({
       region: {
         latitude: position.latitude,
@@ -144,10 +141,13 @@ class Home extends React.Component {
 
       this.setState({
         value: addressgeo,
+        btColor: "#4286f4"
       });
       console.log(this.state.value);
+
     })
       .catch(err => alert(err))
+
   }
   _getCoords = () => {
     navigator.geolocation.getCurrentPosition(
@@ -182,7 +182,9 @@ class Home extends React.Component {
 
       this.setState({
         value: addressgeo1,
+        btColor: "grey"
       });
+
     })
       .catch(err => alert(JSON.stringify(err)))
       },
@@ -215,15 +217,13 @@ class Home extends React.Component {
 
     const items = [
       { name: 'General Service', code: '#1abc9c' }, { name: 'Repair', code: '#2ecc71' },
-      { name: 'Car Wash', code: '#3498db' }, { name: 'Painting', code: '#9b59b6' },
-      { name: 'Road Support', code: '#16a085' },{ name: 'Offers', code: '#27ae60' }
+      { name: 'Car Wash', code: '#3498db' }, { name: 'Paint & Dent', code: '#9b59b6' },
+      { name: 'Road Support', code: '#16a085' }
 
     ];
     return (
       <View style={styles.container}>
-
-
-         <MapView
+        <MapView
          ref={component => this._map = component}
          style ={styles.map}
          showsUserLocation= {true}
@@ -248,7 +248,8 @@ class Home extends React.Component {
               onPress={() => console.log('hello')}
             />
                   </View>
-          <ActionButton icon={(<Icon color="grey" name="location-arrow" type="font-awesome" />)} style={styles.actbt} buttonColor="#fff"  onPress={this._getCoords} />
+          <ActionButton icon={(<Icon color={this.state.btColor} name="location-arrow" type="font-awesome" />)} style={{marginBottom: 90,zIndex: 990}} buttonColor="#fff"  onPress={this._getCoords} />
+          <ActionButton icon={(<Icon color="red" name="local-offer" type="material-icons" />)} style={styles.actbt} buttonColor="#fff"  onPress={()=> this.props.navigation.navigate("Three")} />
 
         <View style={styles.caring} >
           <Carousel
@@ -258,7 +259,7 @@ class Home extends React.Component {
                   data={items}
                   renderItem={this._renderItem}
                   sliderWidth={sliderWidth.width}
-                  itemWidth={250}
+                  itemWidth={150}
                   containerCustomStyle={{ flex: 1 }}
                   slideStyle={{ flex: 1 }}
                   scrollEndDragDebounceValue={5}
@@ -266,7 +267,7 @@ class Home extends React.Component {
                 />
                 <Button
                   color="#064"
-                title="Book Mechcar"
+                title="Start Caring"
                 onPress={()=> this.props.navigation.navigate("Two",{ user: this.state.userval})} />
          </View>
       </View>
@@ -329,36 +330,43 @@ const styles = StyleSheet.create({
   },
   actbt: {
     marginBottom: 15,
-    padding: 50,
     zIndex: 999
   },
   iconmap: {
     marginBottom: 30
   },
   imageSlide:{
-    height : 100,
-    width: 250,
-    position :'absolute',
-    borderRadius : 15
+    height : 64,
+    width: 64,
+    alignSelf:'center',
+    position: 'absolute',
+    bottom: 5
   },
 boxtitle: {
-    margin : 15,
+    marginBottom : 10,
     overflow:'hidden',
-    padding : 5
+    backgroundColor : "#0007",
+    padding: 5
  },
 itemContainer: {
     justifyContent: 'flex-end',
     borderRadius: 15,
     marginTop: 5,
-    height: 100,
-    width : 250,
-    backgroundColor : "#064",
+    height: 75,
+    width : 150,
     marginBottom: 15,
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 5,
-    shadowRadius: 60,
-    elevation: 40,
+    shadowOpacity: 1,
+    shadowRadius: 90,
+    elevation: 5,
+    backgroundColor: "#27ae60"
+
+  },
+  title:{
+    color: "#fff",
+    fontWeight: "bold",
+    alignSelf: "flex-end"
   }
 });
 

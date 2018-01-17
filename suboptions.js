@@ -11,20 +11,54 @@ import Carousel from 'react-native-snap-carousel';
 
 const sliderWidth = Dimensions.get('window');
 
-
-const list = [
+const washPlans = [
   {
-    name: 'Amy Farha',
-    avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/ladylexy/128.jpg',
-    subtitle: 'Vice President'
+    name: 'Silver',
+    subCat: [{
+        name: 'Exterior'
+    },
+    {
+      name: 'Polish'
+    }
+    ]
   },
   {
-    name: 'Chris Jackson',
-    avatar_url: 'https://s3.amazonaws.com/uifaces/faces/twitter/adhamdannaway/128.jpg',
-    subtitle: 'Vice Chairman'
+    name: 'Gold',
+    subCat: [{
+        name: 'Exterior Wash'
+    },
+  {
+    name : 'Interior Cleaning/Vaccum '
   },
+  {
+   name: 'Car Polish'
+ },
+  {
+    name : 'DashBoard Polish'
+  }]
+  },
+  {
+    name : 'Platinum',
+    subCat : [{
+      name : 'Car Wash'
+    },
+  {
+    name: 'Exterior & Interior Cleaning',
+  },{
+    name : 'Interior Vaccum'
+  },{
+    name : 'Car Polish : Wax',
+  },{
+    name : 'Teflon',
+  },{
+    name : 'Interior Dashboard Polish'
+  },{
+    name : 'Paint Protection: Scratch Removal'
+  }]
+  }
 
-]
+];
+
 
 class subOptions extends React.Component {
 static navigationOptions = {
@@ -37,18 +71,7 @@ static navigationOptions = {
         isLoading: true
       }
   }
-  _renderItem ({item, index}) {
-      return (
-          <View style={styles.itemContainer}>
-              <Image style={styles.imageSlide} source={require('./Bajaj-Allianz.jpg')} />
-              <View style={styles.boxtitle} >
-              <Text style={styles.title}>{ item.name }</Text>
-              <Button title="Press me " onPress={()=> alert('hello')} />
 
-            </View>
-          </View>
-      );
-    }
   componentDidMount() {
 
       return fetch('https://still-taiga-32576.herokuapp.com/api/locate')
@@ -69,19 +92,25 @@ static navigationOptions = {
 
     }
     _renderItem ({item, index}) {
+      const clone = item.subCat
         return (
             <View style={styles.itemContainer}>
-                <Image style={styles.imageSlide} source={require('./Bajaj-Allianz.jpg')} />
                 <View style={styles.boxtitle} >
                 <Text style={styles.title}>{ item.name }</Text>
-                <Button title="Press me " onPress={()=> alert('hello')} />
-
+                <View style={{padding: 5}}>
+                <FlatList
+                    data={clone}
+                    keyExtractor={(item, index) => index}
+                    renderItem={({item}) => <Text style={{color: "white",paddingTop: 5, textAlign: 'center'}}>- {item.name}</Text>}
+                  />
+                  </View>
               </View>
             </View>
         );
+
         this.animation.play(30, 120);
 
-    }
+        }
     render() {
       const items = [
         { name: 'General Service', code: '#1abc9c' }, { name: 'Repair', code: '#2ecc71' },
@@ -89,6 +118,54 @@ static navigationOptions = {
         { name: 'Road Support', code: '#16a085' },{ name: 'Offers', code: '#27ae60' }
 
       ];
+      const washPlans = [
+        {
+          name: 'Silver',
+          subCat: [{
+              name: 'Exterior'
+          },
+          {
+            name: 'Polish'
+          }
+          ]
+        },
+        {
+          name: 'Gold',
+          subCat: [{
+              name: 'Exterior Wash'
+          },
+        {
+          name : 'Interior Cleaning/Vaccum '
+        },
+        {
+         name: 'Car Polish'
+       },
+        {
+          name : 'DashBoard Polish'
+        }]
+        },
+        {
+          name : 'Platinum',
+          subCat : [{
+            name : 'Car Wash'
+          },
+        {
+          name: 'Exterior & Interior Cleaning',
+        },{
+          name : 'Interior Vaccum'
+        },{
+          name : 'Car Polish : Wax',
+        },{
+          name : 'Teflon',
+        },{
+          name : 'Interior Dashboard Polish'
+        },{
+          name : 'Paint Protection: Scratch Removal'
+        }]
+        }
+
+      ];
+      console.log(washPlans);
       if (this.state.isLoading) {
         return (
           <View style={{flex: 1, padding: 50}}>
@@ -99,31 +176,18 @@ static navigationOptions = {
 
       return (
         <View style={styles.container}>
-          <ScrollView>
           <Carousel
 
                   style={styles.slide}
                   ref={(c) => { this._carousel = c; }}
-                  data={items}
+                  data={washPlans}
                   renderItem={this._renderItem}
                   sliderWidth={sliderWidth.width}
                   itemWidth={250}
                   containerCustomStyle={{ flex: 1 }}
                   slideStyle={{ flex: 1 }}
                 />
-                <List containerStyle={{marginBottom: 20}}>
-                  {
-                    this.state.dataSource.map((l, i) => (
-                      <ListItem
-
-                        key={i}
-                        title={l.mobile}
-                      />
-                    ))
-                  }
-                </List>
-                </ScrollView>
-        </View>
+              </View>
       );
     }
   }
@@ -161,7 +225,10 @@ static navigationOptions = {
         padding : 5
      },
       title:{
-        color:"#FFF"
+        color:"#FFF",
+        alignSelf: "center",
+        fontSize : 42,
+        fontWeight: 'bold'
       },
       item: {
         padding: 10,
@@ -174,12 +241,13 @@ static navigationOptions = {
 
       },
       itemContainer: {
-        justifyContent: 'flex-end',
+        justifyContent: 'flex-start',
         borderRadius: 15,
         marginTop: 5,
         height: 300,
         width : 250,
         backgroundColor : "#064",
+        padding: 10
       },
       itemName: {
         fontSize: 16,
