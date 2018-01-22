@@ -16,7 +16,8 @@ import {
   Button,
   Animated,
   Image,
-  TouchableOpacity
+  TouchableOpacity,
+  BackHandler
 } from 'react-native';
 import LottieView from 'lottie-react-native';
 import Carousel from 'react-native-snap-carousel';
@@ -40,9 +41,9 @@ const screenh = Dimensions.get('window').height;
 const sliderWidth = Dimensions.get('window');
 
 
-class Home extends React.Component {
+class Home extends Component {
   static navigationOptions = {
-    title: "Home",
+    header: null,
   };
   constructor(props) {
     super(props);
@@ -102,6 +103,7 @@ class Home extends React.Component {
     alert(this.state.value);
   }
   componentDidMount() {
+    BackHandler.addEventListener('hardwareBackPress', this.onBackButtonPressed);
 
     this._getCoords();
     this.watchID = navigator.geolocation.watchPosition((position) => {
@@ -113,7 +115,7 @@ class Home extends React.Component {
         }
       });
     });
-
+  console.log(this.props.navigation.state.params.user);
 
   }
   onRegionChange(position) {
@@ -196,8 +198,13 @@ class Home extends React.Component {
     return this.state.value;
   }
   componentWillUnmount() {
-    navigator.geolocation.clearWatch(this.watchID);
-  }
+    BackHandler.removeEventListener('hardwareBackPress', this.onBackButtonPressed);
+}
+
+onBackButtonPressed() {
+    return true;
+}
+
   _checkone(id){
     return fetch('https://still-taiga-32576.herokuapp.com/api/locate')
       .then((response) => response.json())
@@ -222,6 +229,7 @@ class Home extends React.Component {
 
     ];
     return (
+
       <View style={styles.container}>
         <MapView
          ref={component => this._map = component}
@@ -268,7 +276,7 @@ class Home extends React.Component {
                 <Button
                   color="#064"
                 title="Start Caring"
-                onPress={()=> this.props.navigation.navigate("Two",{ user: this.state.userval})} />
+                onPress={()=> this.props.navigation.navigate("One")} />
          </View>
       </View>
 
@@ -282,7 +290,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#F5FCFF',
+    backgroundColor: '#FFF',
   },
   lottivw:{
     height:100,
@@ -319,7 +327,8 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     bottom: 0,
-    flex:1
+    flex:1,
+    backgroundColor: "#FFF"
   },
   caring: {
     padding : 5,

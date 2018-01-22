@@ -5,21 +5,31 @@ import Home from './App';
 import { List, ListItem, Rating } from 'react-native-elements';
 import GridView from 'react-native-super-grid';
 import subOptions from './suboptions';
+import LottieView from 'lottie-react-native';
 
 
-
-class Options extends React.Component {
+class Options extends Component {
 static navigationOptions = {
-  title : 'Options'
+  header: null
 }
   constructor(props) {
     super(props)
     this.state ={
       name: null,
+      tapped: false
     }
     this.setItem = this.setItem.bind(this);
+    this._details =this._details.bind(this);
   }
-
+  componentWillMount(){
+    if (this.state.name !== null) {
+      this.props.navigation.navigate("Two")
+    }
+  }
+componentDidMount(){
+  if(this.animation)
+  this.animation.play();
+}
 setItem(): async{
     let key = this.state.name;
     let user = {
@@ -32,6 +42,35 @@ setItem(): async{
       alert(e);
     }
 }
+_details(){
+  this.setState({
+    tapped: true,
+  })
+    return fetch('https://still-taiga-32576.herokuapp.com/api/authenticate/9009005929')
+    .then((response) => response.json())
+    .then((responseJson) => {
+      let ds = responseJson;
+      console.log(responseJson);
+      this.setState({
+        isLoading: false,
+        userdata: responseJson
+      }, function() {
+
+      });
+      this.props.navigation.navigate("Two",{user: responseJson})
+      this.setState({
+        tapped: false
+      })
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+}
+componentWillUnmount(){
+  this.setState({
+    tapped: false
+  });
+}
   render() {
     const navigate = this.props.navigation;
 
@@ -43,26 +82,40 @@ setItem(): async{
     ];
 
    return (
-       <GridView
-
-        itemDimension={100}
-        items={items}
-        style={styles.gridView}
-        renderItem={item => (
-          <TouchableOpacity  onPress={() => this.props.navigation.navigate("Three")} style={[styles.itemContainer, { backgroundColor: item.code }]}>
-            <Text style={styles.itemName}>{item.name}</Text>
-            <Text style={styles.itemCode}>{item.code}</Text>
-
-          </TouchableOpacity>
-        )}
-      />
+     <View style={styles.container}>
+       <LottieView
+         style={{width: 200,height:200,alignSelf:'center'}}
+         loop={true}
+         speed={2}
+         ref={(animation)=> this.animation = animation}
+         source={require('./iphone_x_loading.json')}
+        />
+        <Text style={styles.title}>Enter Your Mobile Number</Text>
+        <TextInput style={{fontSize: 20,fontWeight: 'bold', textAlign:'center'}}></TextInput>
+        <View style={{margin: 15, bottom: 3}}>
+          <Button
+            color="#064"
+            title="submit"
+            onPress={this._details}
+           />
+        </View>
+        {this.state.tapped &&
+          <LottieView
+            style={{width: 200,height:200,alignSelf:'center'}}
+            loop={false}
+            speed={1}
+            ref={(animation)=>{if(animation) animation.play()}}
+            source={require('./checked_done_.json')}
+           />
+        }
+        </View>
    );
  }
 }
 const styles = StyleSheet.create({
     container: {
      flex: 1,
-     paddingTop: 22
+     backgroundColor: "white"
     },
     sectionHeader: {
       paddingTop: 2,
@@ -81,6 +134,11 @@ const styles = StyleSheet.create({
     gridView: {
       paddingTop: 25,
       flex: 1,
+    },
+    title:{
+      fontSize: 24,
+      fontWeight : 'bold',
+      textAlign: 'center'
     },
     itemContainer: {
       justifyContent: 'flex-end',

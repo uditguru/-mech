@@ -8,6 +8,7 @@ import { List, ListItem, Rating } from 'react-native-elements';
 import GridView from 'react-native-super-grid';
 import Home from './App';
 import Carousel from 'react-native-snap-carousel';
+import LottieView from 'lottie-react-native';
 
 const sliderWidth = Dimensions.get('window');
 
@@ -15,10 +16,10 @@ const washPlans = [
   {
     name: 'Silver',
     subCat: [{
-        name: 'Exterior'
+        name: 'Exterior Wash'
     },
     {
-      name: 'Polish'
+      name: 'Exterior Polish'
     }
     ]
   },
@@ -60,9 +61,9 @@ const washPlans = [
 ];
 
 
-class subOptions extends React.Component {
+class subOptions extends Component {
 static navigationOptions = {
-  title : 'Select'
+  title : 'Packages'
 }
   constructor(props) {
     super(props)
@@ -73,7 +74,6 @@ static navigationOptions = {
   }
 
   componentDidMount() {
-
       return fetch('https://still-taiga-32576.herokuapp.com/api/locate')
         .then((response) => response.json())
         .then((responseJson) => {
@@ -108,7 +108,6 @@ static navigationOptions = {
             </View>
         );
 
-        this.animation.play(30, 120);
 
         }
     render() {
@@ -122,10 +121,10 @@ static navigationOptions = {
         {
           name: 'Silver',
           subCat: [{
-              name: 'Exterior'
+              name: 'Exterior Wash'
           },
           {
-            name: 'Polish'
+            name: 'Exterior Polish'
           }
           ]
         },
@@ -187,6 +186,21 @@ static navigationOptions = {
                   containerCustomStyle={{ flex: 1 }}
                   slideStyle={{ flex: 1 }}
                 />
+                <LottieView
+                  style={{width:150, height:150, alignSelf: 'center',backgroundColor: 'transparent'}}
+                  speed={1}
+                  ref={(animation) => {
+                    if (animation) animation.play();
+                  }}
+                  source={require('./locat.json')}
+                />
+              <View style={{margin : 10}}>
+                <Button
+                  color="#064"
+                  title="Book"
+                  onPress={()=> console.log("yes we do")}
+                 />
+                 </View>
               </View>
       );
     }
@@ -247,7 +261,12 @@ static navigationOptions = {
         height: 300,
         width : 250,
         backgroundColor : "#064",
-        padding: 10
+        padding: 10,
+        shadowOffset: {width : 0, height: 0},
+        shadowRadius: 90,
+        shadowOpacity: 1,
+        shadowColor: "black",
+        elevation: 5
       },
       itemName: {
         fontSize: 16,

@@ -6,8 +6,8 @@ import Options from './options';
 import subOptions from  './suboptions';
 
  const Routes = StackNavigator({
-  One: {screen: Home , initialRouteName: Home},
-  Two: {screen: Options, },
+  One: {screen: Options , initialRouteName: Options},
+  Two: {screen: Home,  },
   Three: {screen: subOptions }
 });
 
