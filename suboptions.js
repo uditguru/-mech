@@ -71,25 +71,26 @@ static navigationOptions = {
         value : "Indore",
         isLoading: true
       }
+      this._book = this._book.bind(this);
   }
 
-  componentDidMount() {
-      return fetch('https://still-taiga-32576.herokuapp.com/api/locate')
-        .then((response) => response.json())
-        .then((responseJson) => {
-          let ds = responseJson;
-          this.setState({
-            progress: new Animated.Value(0.5),
-            isLoading: false,
-            dataSource: responseJson
-          }, function() {
-            // do something with new state
-          });
+    _book(){
+    
+      return fetch('https://still-taiga-32576.herokuapp.com/api/book',{
+        method: 'POST',
+        header:{
+          Accept: 'application/json',
+          'Content-Type': 'application-json'
+        },
+        body:JSON.stringify({
+          name : "Udit",
+          mobile: '9009005929',
+          email : 'guru@udit.com'
         })
-        .catch((error) => {
-          console.error(error);
-        });
-
+      }).then(response => response)
+      .then(dta => {
+        console.log(dta);
+      }).catch(err => console.log(err))
     }
     _renderItem ({item, index}) {
       const clone = item.subCat
@@ -165,13 +166,7 @@ static navigationOptions = {
 
       ];
       console.log(washPlans);
-      if (this.state.isLoading) {
-        return (
-          <View style={{flex: 1, padding: 50}}>
-            <ActivityIndicator />
-          </View>
-        );
-      }
+
 
       return (
         <View style={styles.container}>
@@ -198,7 +193,7 @@ static navigationOptions = {
                 <Button
                   color="#064"
                   title="Book"
-                  onPress={()=> console.log("yes we do")}
+                  onPress={()=> this._book()}
                  />
                  </View>
               </View>

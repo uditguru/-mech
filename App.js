@@ -29,6 +29,8 @@ import Geocoder from 'react-native-geocoder';
 import ActionButton from 'react-native-action-button';
 import Options from './options';
 import locate from './locat.json';
+import MoviePopup from './prompts';
+
 const { width, height } = Dimensions.get('window');
 
 const ASPECT_RATIO = width / height;
@@ -56,14 +58,61 @@ class Home extends Component {
         latitude: LATITUDE,
         latitudeDelta: LATITUDE_DELTA,
         longitudeDelta: LONGITUDE_DELTA
-      }
+      },
+      popupIsOpen: false,
+      // Day chosen by user
+      chosenDay: 0,       // choose first day by default
+      // Time chosen by user
+      chosenTime: null,
     }
     this.onRegionChange = this.onRegionChange.bind(this);
     this._getCoords = this._getCoords.bind(this);
     this._getvalue = this._getvalue.bind(this);
 
   }
+  openMovie = (movie) => {
+    this.setState({
+      popupIsOpen: true,
+      movie,
+    });
+  }
 
+  closeMovie = () => {
+    this.setState({
+      popupIsOpen: false,
+      // Reset values to default ones
+      chosenDay: 0,
+      chosenTime: null,
+    });
+  }
+
+  chooseDay = (day) => {
+    this.setState({
+      chosenDay: day,
+    });
+  }
+
+  chooseTime = (time) => {
+    this.setState({
+      chosenTime: time,
+    });
+  }
+
+  bookTicket = () => {
+    // Make sure they selected time
+    if (!this.state.chosenTime) {
+      alert('Please select show time');
+    } else {
+      // Close popup
+      this.closeMovie();
+      // Navigate away to Confirmation route
+      this.props.navigator.push({
+        name: 'confirmation',
+        // Generate random string
+        code: Math.random().toString(36).substring(6).toUpperCase(),
+      });
+    }
+  }
   _renderItem ({item, index}) {
 
 
@@ -115,7 +164,6 @@ class Home extends Component {
         }
       });
     });
-  console.log(this.props.navigation.state.params.user);
 
   }
   onRegionChange(position) {
@@ -139,7 +187,8 @@ class Home extends Component {
     //Geocoder.fallbackToGoogle(AIzaSyCKbwmwJ1pgIexNSrf9Ryak8tZJtHa0yeU);
 
     Geocoder.geocodePosition(geoloc).then(res => {
-      let addressgeo = res[0].formattedAddress;
+
+      let addressgeo = res[1].formattedAddress;
 
       this.setState({
         value: addressgeo,
@@ -148,7 +197,20 @@ class Home extends Component {
       console.log(this.state.value);
 
     })
-      .catch(err => alert(err))
+      .catch(err => {
+        Geocoder.geocodePosition(geoloc).then(res => {
+
+          let addressgeo = res[0].formattedAddress;
+
+          this.setState({
+            value: addressgeo,
+            btColor: "#4286f4"
+          });
+          console.log(this.state.value);
+
+        })
+      })
+
 
   }
   _getCoords = () => {
@@ -180,7 +242,7 @@ class Home extends Component {
 
         this._map.animateToCoordinate(tempCoords, 2);
         Geocoder.geocodePosition(coords).then(res => {
-        let addressgeo1 = res[0].formattedAddress;
+        let addressgeo1 = res[1].formattedAddress;
 
       this.setState({
         value: addressgeo1,
@@ -243,9 +305,10 @@ onBackButtonPressed() {
        ref ="textInput"
         style={styles.searchbar}
         value={this.state.value}
-        editable = {false}
+        editable = {true}
         clearTextOnFocus= {true}
         clearButtonMode="while-editing"
+        underlineColorAndroid ="transparent"
         >
         </TextInput>
         <View style={styles.iconmap}>
@@ -276,8 +339,19 @@ onBackButtonPressed() {
                 <Button
                   color="#064"
                 title="Start Caring"
-                onPress={()=> this.props.navigation.navigate("One")} />
+                onPress={()=> this.openMovie()} />
+
          </View>
+         <MoviePopup
+           movie={this.state.movie}
+           isOpen={this.state.popupIsOpen}
+           onClose={this.closeMovie}
+           chosenDay={this.state.chosenDay}
+           chosenTime={this.state.chosenTime}
+           onChooseDay={this.chooseDay}
+           onChooseTime={this.chooseTime}
+           onBook={this.bookTicket}
+         />
       </View>
 
 
@@ -339,7 +413,7 @@ const styles = StyleSheet.create({
   },
   actbt: {
     marginBottom: 15,
-    zIndex: 999
+    zIndex: 99
   },
   iconmap: {
     marginBottom: 30

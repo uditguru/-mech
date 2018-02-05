@@ -9,6 +9,7 @@
   "dependencies": {
     "lottie-react-native": "^2.2.7",
     "native-navigation": "^0.2.1",
+    "prop-types": "^15.6.0",
     "react": "16.0.0",
     "react-native": "0.51.0",
     "react-native-action-button": "^2.8.3",
