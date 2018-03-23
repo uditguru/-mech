@@ -74,11 +74,13 @@ export default class Option extends Component {
           <Text style={{ color: isChosen ? colorDefault : colorSelected }}>
             {value}
           </Text>
+
+
         </Animated.View>
       </TouchableOpacity>
+
     );
   }
-
 }
 
 const styles = StyleSheet.create({

@@ -3,6 +3,7 @@ package com.mech;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.arttitude360.reactnative.rngoogleplaces.RNGooglePlacesPackage;
 import com.oblador.vectoricons.VectorIconsPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -11,7 +12,6 @@ import com.facebook.soloader.SoLoader;
 import com.airbnb.android.react.maps.MapsPackage;
 import com.devfd.RNGeocoder.RNGeocoderPackage; // <--- import
 import com.airbnb.android.react.lottie.LottiePackage;
-
 
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +28,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new RNGooglePlacesPackage(),
             new VectorIconsPackage(),
           new MapsPackage(),
           new RNGeocoderPackage(),

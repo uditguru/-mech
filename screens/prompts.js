@@ -14,11 +14,12 @@ import {
 } from 'react-native';
 import { defaultStyles } from './styles';
 import Choices from './choices';
+import { Icon } from 'react-native-elements';
 
 // Get screen dimensions
 const { width, height } = Dimensions.get('window');
 // Set default popup height to 67% of screen height
-const defaultHeight = height * 0.67;
+const defaultHeight = height * 0.35;
 
 export default class MoviePopup extends Component {
 
@@ -38,6 +39,8 @@ export default class MoviePopup extends Component {
     onBook: PropTypes.func,
     // Gets called when popup closed
     onClose: PropTypes.func,
+
+    faredetails: PropTypes.object
   }
 
   state = {
@@ -51,6 +54,8 @@ export default class MoviePopup extends Component {
     expanded: false,
     // Visibility flag
     visible: this.props.isOpen,
+
+    fontest: 12
   };
 
   // When user starts pulling popup previous height gets stored here
@@ -93,7 +98,8 @@ export default class MoviePopup extends Component {
         if (vy < -0.75) {
           this.setState({
             expanded: true,
-            height: height
+            height: height*0.8,
+            fontest: 24
           });
         }
 
@@ -107,7 +113,7 @@ export default class MoviePopup extends Component {
         }
         // Limit max height to screen height
         else if (newHeight > height) {
-          this.setState({ height: height });
+          this.setState({ height: height * 0.8 });
         }
         else {
           this.setState({ height: newHeight });
@@ -214,14 +220,15 @@ export default class MoviePopup extends Component {
   render() {
     const checklist = ["General Checkup", "Engine Oil (Shell/Castrol) + Oil filter change","Engine fine tune", "Fluid top-ups",
                         "Battery checkup","Minor issue fix (Electrical/Power window/wiper blade/mudflap replacement)","Door adjustment and lubrication","Brake pad cleaning/replacement","Eco/Water wash"];
-    const addition = [ '9:00 AM', '11:10 AM', '12:00 PM', '1:50 PM', '4:30 PM', '6:00 PM', '7:10 PM', '9:45 PM' ];
+    const addition = [ '1' , '2'  ];
     const {
       movie,
       chosenDay,
       chosenTime,
       onChooseDay,
       onChooseTime,
-      onBook
+      onBook,
+      faredetails
     } = this.props;
     // Pull out movie data
     const { title, genre, poster } = {};
@@ -252,22 +259,22 @@ export default class MoviePopup extends Component {
 
             {/* Showtimes */}
             <View>
-              {/* Day */}
+              {/* Day
               <Text style={styles.sectionHeader}>In our package</Text>
               <Choices
                 values={checklist}
                 chosen={chosenDay}
                 onChoose={onChooseDay}
-              />
+              /> */}
               {/* Time */}
-              <Text style={styles.sectionHeader}>Time Slot</Text>
+              <Text style={styles.sectionHeader}>Number of Seats</Text>
               <Choices
                 values={addition}
                 chosen={chosenTime}
                 onChoose={onChooseTime}
 
               />
-
+              <Text style={{fontSize: this.state.fontest}}>Estimated Fare : Rs. {((faredetails.duration * 1.5) + (faredetails.distance * 4.5) * (chosenTime+1.1+ chosenTime* 0.2)).toFixed(1) }</Text>
             </View>
 
           </View>
@@ -279,7 +286,7 @@ export default class MoviePopup extends Component {
               style={styles.buttonContainer}
               onPress={onBook}
             >
-              <Text style={styles.button}>Book My Tickets</Text>
+              <Text style={styles.button}>Request Seats</Text>
             </TouchableHighlight>
           </View>
 
@@ -346,7 +353,7 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     backgroundColor: '#064',
-    borderRadius: 100,
+    borderRadius: 5,
     paddingVertical: 10,
     paddingHorizontal: 15,
     alignItems: 'center',

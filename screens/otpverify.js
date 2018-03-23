@@ -1,14 +1,13 @@
 import React, { Component } from 'react';
-import { View,Text, Button, TextInput, AsyncStorage, FlatList, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
+import { View,Text, Button, TextInput, AsyncStorage, FlatList, StyleSheet, ScrollView, TouchableOpacity, Dimensions} from 'react-native';
 import {StackNavigator} from 'react-navigation';
 import Home from './App';
 import { List, ListItem, Rating } from 'react-native-elements';
-import GridView from 'react-native-super-grid';
-import subOptions from './suboptions';
 import LottieView from 'lottie-react-native';
 
+const dimen = Dimensions.get('window');
 
-class Options extends Component {
+class OTPverify extends Component {
 static navigationOptions = {
   header: null
 }
@@ -18,7 +17,7 @@ static navigationOptions = {
       name: null,
       tapped: false,
       loadStart: false,
-      mobile: ''
+      otp: ''
     }
     this.setItem = this.setItem.bind(this);
     this._details =this._details.bind(this);
@@ -27,6 +26,7 @@ static navigationOptions = {
     if (this.state.name !== null) {
       this.props.navigation.navigate("Two")
     }
+    console.log(this.props.navigation.state.params.userinfo[0]);
   }
 componentDidMount(){
   if(this.animation)
@@ -35,43 +35,44 @@ componentDidMount(){
 setItem(): async{
     let key = this.state.name;
     let user = {
-      name: key,
+      key,
     };
     try {
-      AsyncStorage.setItem('user', JSON.stringify(user));
-      console.log(user);
+      AsyncStorage.setItem('user', JSON.stringify(this.props.navigation.state.params.userinfo[0]));
+      console.log(AsyncStorage.getItem('user'));
     } catch (e) {
       alert(e);
     }
 }
-_details(){
-  var num = Math.floor(1000 + Math.random() * 9000);
-
+_details(): async{
+  let key = this.props.navigation.state.params.userinfo[0];
+  let user = {
+    key,
+  };
   this.setState({
     tapped: true,
   })
-  return fetch('https://control.msg91.com/api/sendhttp.php?authkey=91629AOW6QjOHJRP560a033b&mobiles=919009005929,91' + this.state.text + '&message=OTP is ' + num + '&sender=Mchcar&route=4&country=91')
-  .then((response) => response)
-  .then((responseJson) => {
-    let ds = responseJson;
-    console.log(responseJson);
-    this.setState({
-      isLoading: false,
-    }, function() {
+    if (this.props.navigation.state.params.user == this.state.text) {
 
-    });
-      this.props.navigation.navigate("Four",{user: num})
-      this.setState({
-        tapped: false
-      })
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+      try {
+         AsyncStorage.setItem('@mysuperstore:user', JSON.stringify(user));
+         console.log(JSON.stringify(user));
+      } catch (e) {
+        alert(e);
+      }
+      this.props.navigation.navigate("Two")
+    } else {
+      alert("Wrong");
+    }
+//      this.setState({
+//        tapped: false
+//      })
+
 }
 componentWillUnmount(){
   this.setState({
-    tapped: false
+    tapped: false,
+    loadStart: true
   });
 }
   render() {
@@ -86,16 +87,17 @@ componentWillUnmount(){
 
    return (
      <View style={styles.container}>
-       <LottieView
+        <LottieView
          style={{width: 200,height:200,alignSelf:'center'}}
          loop={true}
          speed={2}
          ref={(animation)=> this.animation = animation}
-         source={require('./iphone_x_loading.json')}
+         source={require('../anim/code_invite_success.json')}
         />
-        <Text style={styles.title}>Enter Your Mobile Number</Text>
+        <Text style={styles.title}>Enter OTP </Text>
         <TextInput
           style={{fontSize: 20,fontWeight: 'bold', textAlign:'center'}}
+          keyboardType="numeric"
           onChangeText={(text) => this.setState({text})}
           value={this.state.text}
           ></TextInput>
@@ -105,17 +107,19 @@ componentWillUnmount(){
             title="submit"
             onPress={this._details}
            />
+
         </View>
         {this.state.tapped &&
           <LottieView
-            style={{width: 200,height:200,alignSelf:'center'}}
-            loop={false}
+            style={{width: dimen.width ,height:dimen.height,alignSelf:'center', flex: 2}}
+            loop={true}
             speed={1}
             ref={(animation)=>{if(animation) animation.play()}}
-            source={require('./checked_done_.json')}
+            source={require('../anim/animation-w64-h64.json')}
            />
         }
-      </View>
+
+        </View>
    );
  }
 }
@@ -164,4 +168,4 @@ const styles = StyleSheet.create({
       color: '#fff',
     },
   });
-export default Options;
+export default OTPverify;

@@ -1,15 +1,11 @@
 import React, { Component } from 'react';
-import { View,Text, Button, TextInput, AsyncStorage, FlatList, StyleSheet, ScrollView, TouchableOpacity, Dimensions} from 'react-native';
+import { View,Text, Button, TextInput, AsyncStorage, FlatList, StyleSheet, ScrollView, TouchableOpacity} from 'react-native';
 import {StackNavigator} from 'react-navigation';
 import Home from './App';
 import { List, ListItem, Rating } from 'react-native-elements';
-import GridView from 'react-native-super-grid';
-import subOptions from './suboptions';
 import LottieView from 'lottie-react-native';
 
-const dimen = Dimensions.get('window');
-
-class OTPverify extends Component {
+class Options extends Component {
 static navigationOptions = {
   header: null
 }
@@ -19,51 +15,51 @@ static navigationOptions = {
       name: null,
       tapped: false,
       loadStart: false,
-      otp: ''
+      mobile: ''
     }
-    this.setItem = this.setItem.bind(this);
     this._details =this._details.bind(this);
   }
-  componentWillMount(){
-    if (this.state.name !== null) {
-      this.props.navigation.navigate("Two")
-    }
-    console.log(this.props.navigation.state.params.user);
-  }
+
 componentDidMount(){
   if(this.animation)
   this.animation.play();
+
 }
-setItem(): async{
-    let key = this.state.name;
-    let user = {
-      name: key,
-    };
-    try {
-      AsyncStorage.setItem('user', JSON.stringify(user));
-      console.log(user);
-    } catch (e) {
-      alert(e);
-    }
-}
+
 _details(){
+  var num = Math.floor(1000 + Math.random() * 9000);
+
   this.setState({
     tapped: true,
   })
-    if (this.props.navigation.state.params.user == this.state.text) {
-      this.props.navigation.navigate("Two")
-    } else {
-      alert("Wrong");
-    }
-//      this.setState({
-//        tapped: false
-//      })
+  return fetch('https://control.msg91.com/api/sendhttp.php?authkey=91629AOW6QjOHJRP560a033b&mobiles=91' + this.state.text + '&message=OTP is ' + num + '&sender=Mchcar&route=4&country=91')
+  .then((response) => response)
+  .then((responseJson) => {
+    let ds = responseJson;
+    console.log(responseJson);
+    this.setState({
+      isLoading: false,
+    }, function() {
+      return fetch('https://still-taiga-32576.herokuapp.com/api/authenticate/'+ this.state.text)
+      .then((infod)=> infod.json())
+      .then((detailuser)=> {
+        console.log(detailuser);
+        this.props.navigation.navigate("Four",{user: num, userinfo: detailuser })
+      })
 
+    });
+
+      this.setState({
+        tapped: false
+      })
+    })
+    .catch((error) => {
+      console.error(error);
+    });
 }
 componentWillUnmount(){
   this.setState({
-    tapped: false,
-    loadStart: true
+    tapped: false
   });
 }
   render() {
@@ -78,18 +74,19 @@ componentWillUnmount(){
 
    return (
      <View style={styles.container}>
-        <LottieView
+       <LottieView
          style={{width: 200,height:200,alignSelf:'center'}}
          loop={true}
          speed={2}
          ref={(animation)=> this.animation = animation}
-         source={require('./code_invite_success.json')}
+         source={require('../anim/iphone_x_loading.json')}
         />
-        <Text style={styles.title}>Enter OTP </Text>
+        <Text style={styles.title}>Enter Your Mobile Number</Text>
         <TextInput
           style={{fontSize: 20,fontWeight: 'bold', textAlign:'center'}}
           onChangeText={(text) => this.setState({text})}
           value={this.state.text}
+          keyboardType="numeric"
           ></TextInput>
         <View style={{margin: 15, bottom: 3}}>
           <Button
@@ -97,19 +94,17 @@ componentWillUnmount(){
             title="submit"
             onPress={this._details}
            />
-
         </View>
         {this.state.tapped &&
           <LottieView
-            style={{width: dimen.width ,height:dimen.height,alignSelf:'center', flex: 2}}
-            loop={true}
+            style={{width: 200,height:200,alignSelf:'center'}}
+            loop={false}
             speed={1}
             ref={(animation)=>{if(animation) animation.play()}}
-            source={require('./animation-w64-h64.json')}
+            source={require('../anim/checked_done_.json')}
            />
         }
-
-        </View>
+      </View>
    );
  }
 }
@@ -158,4 +153,4 @@ const styles = StyleSheet.create({
       color: '#fff',
     },
   });
-export default OTPverify;
+export default Options;
